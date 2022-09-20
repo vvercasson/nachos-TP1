@@ -93,12 +93,26 @@ ConsoleTest (const char *in, const char *out)
       {
           readAvail->P ();        // wait for character to arrive
           ch = console->RX ();
+          
+          #ifdef CHANGED
+          console->TX ('<');    // echo <
+          writeDone->P ();      // wait for it to be done
+          #endif
+
           console->TX (ch);        // echo it!
           writeDone->P ();        // wait for write to finish
-          if (ch == 'q') {
-              printf ("Nothing more, bye!\n");
+
+          #ifdef CHANGED
+          console->TX ('>');        // echo >
+          writeDone->P ();          // done
+          #endif
+
+          #ifdef CHANGED
+          if (ch == 'q' || ch == EOF) {
+              printf ("\nAu revoir!\n");
               break;                // if q, quit
           }
+          #endif // CHANGED
       }
     delete console;
     delete readAvail;
