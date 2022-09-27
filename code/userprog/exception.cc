@@ -107,6 +107,15 @@ ExceptionHandler (ExceptionType which)
                     consoledriver->PutChar(machine->ReadRegister(4));
                     break;
                   }
+                case SC_PutString:
+                  {
+                    DEBUG ('s',"PutString\n");
+                    char buffer[MAX_STRING_SIZE];
+                    copyStringFromMachine(machine->ReadRegister(4),buffer,MAX_STRING_SIZE);
+                    consoledriver->PutString(buffer);
+                    break;
+                  }
+
                 #endif
                 default:
                   {

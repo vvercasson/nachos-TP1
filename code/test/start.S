@@ -153,6 +153,14 @@ PutChar:
         syscall
         j        $31
         .end   PutChar
+
+        .globl PutString
+        .ent   PutString
+PutString:
+        addiu $2,$0,SC_PutString
+        syscall
+        j        $31
+        .end   PutString
 /* dummy function to keep gcc happy */
         .globl  __main
         .ent    __main
