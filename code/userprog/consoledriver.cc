@@ -40,21 +40,21 @@ int ConsoleDriver::GetChar()
 
 void ConsoleDriver::PutString(const char *s)
 {
-    // int i = 0;
-    // while(s[i] != '\0') {
-    //     PutChar(s[i]);
-    //     i++;
-    // }
+    int i = 0;
+    while(s[i] != '\0') {
+        PutChar(s[i]);
+        i++;
+    }
 }
 
 void ConsoleDriver::GetString(char *s, int n)
 {
-    // for(int i = 0; i < n; i++) {
-    //     s[i] = GetChar();
-    //     if (s[i] == '\0') {
-    //         return;
-    //     }
-    // }
+    for(int i = 0; i < n; i++) {
+        s[i] = GetChar();
+        if (s[i] == '\0') {
+            return;
+        }
+    }
 }
 
 #endif // CHANGED

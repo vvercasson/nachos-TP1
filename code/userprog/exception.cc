@@ -40,6 +40,24 @@ UpdatePC ()
     machine->WriteRegister (NextPCReg, pc);
 }
 
+unsigned copyStringFromMachine(int from,char *to,unsigned size){
+  int tmp;
+  unsigned int i;
+  bool tailleMax = true;
+  for(i = 0; i < size-1; i++)
+  {
+    machine->ReadMem(from,1,&tmp);
+    to[i] = tmp;
+    if(to[i] == '\0'){
+      tailleMax = false;
+      break;
+    }
+  }
+  if(tailleMax)
+    to[i+1] = '\0';
+  return i;
+}
+
 
 //----------------------------------------------------------------------
 // ExceptionHandler
