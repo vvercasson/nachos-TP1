@@ -39,6 +39,13 @@ Machine *machine;		// user program memory and registers
 PostOffice *postOffice;
 #endif
 
+#ifdef CHANGED
+#ifdef USER_PROGRAM
+ConsoleDriver *consoledriver;
+#endif
+#endif
+
+
 
 // External definition, to allow us to take a pointer to this function
 extern void Cleanup ();
@@ -229,6 +236,11 @@ Cleanup ()
     if (machine) {
         delete machine;
         machine = NULL;
+    }
+
+    if (consoledriver) {
+        delete consoledriver;
+        consoledriver = NULL;
     }
 #endif
 

@@ -119,6 +119,7 @@ main (int argc, char **argv)
           if (!strcmp (*argv, "-x"))
             {                        // run a user program
                 ASSERT_MSG (argc > 1, "-x needs a program name\n");
+                consoledriver = new ConsoleDriver(NULL,NULL);
                 StartProcess (*(argv + 1));
                 argCount = 2;
             }
@@ -139,7 +140,7 @@ main (int argc, char **argv)
                     ConsoleDriverTest (NULL, NULL);
                 else
                   {
-                      ASSERT_MSG (argc > 2, "-c needs two file names\n");
+                      ASSERT_MSG (argc > 2, "-sc needs two file names\n");
                       ConsoleDriverTest (*(argv + 1), *(argv + 2));
                       argCount = 3;
                   }
@@ -189,7 +190,6 @@ main (int argc, char **argv)
             }
 #endif // NETWORK
       }
-
     currentThread->Finish ();	// NOTE: if the procedure "main"
     // returns, then the program "nachos"
     // will exit (as any other normal program
