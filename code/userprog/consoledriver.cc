@@ -33,9 +33,8 @@ void ConsoleDriver::PutChar(int ch)
 
 int ConsoleDriver::GetChar()
 {
-    readAvail->P ();        // wait for character to arrive
+    readAvail->P ();      // wait for character to arrive
     return console->RX ();
-    
 }
 
 void ConsoleDriver::PutString(const char *s)

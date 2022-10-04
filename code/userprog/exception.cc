@@ -44,9 +44,9 @@ unsigned copyStringFromMachine(int from,char *to,unsigned size){
   int tmp;
   unsigned int i;
   bool tailleMax = true;
-  for(i = 0; i < size-1; i++)
+  for(i = 0; i < size; i++)
   {
-    machine->ReadMem(from,1,&tmp);
+    machine->ReadMem(from+i,1,&tmp);
     to[i] = tmp;
     if(to[i] == '\0'){
       tailleMax = false;
@@ -54,7 +54,7 @@ unsigned copyStringFromMachine(int from,char *to,unsigned size){
     }
   }
   if(tailleMax)
-    to[i+1] = '\0';
+    to[i-1] = '\0';
   return i;
 }
 
@@ -115,11 +115,17 @@ ExceptionHandler (ExceptionType which)
                     consoledriver->PutString(buffer);
                     break;
                   }
+                case SC_Exit:
+                  {
+                    DEBUG ('s', "Exiting the program : exit value %d\n", machine->ReadRegister(2));
+                    interrupt->Powerdown();
+                    break;
+                  }
 
                 #endif
                 default:
                   {
-                    ASSERT_MSG(FALSE, "Unimplemented system call %d\n", type);
+                    ASSERT_MSG(FALSE, "Unimplemented system call %d\nMachine shutting down due to unknown syscall\n", type);
                   }
               }
 
