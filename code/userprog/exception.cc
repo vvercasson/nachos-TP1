@@ -58,6 +58,18 @@ unsigned copyStringFromMachine(int from,char *to,unsigned size){
   return i;
 }
 
+unsigned copyStringToMachine(int to, char* from, unsigned size) {
+  unsigned i;
+  for (i = 0; i < size; i++)
+  {
+    machine->WriteMem(to + i,1, from[i]);
+    if(from[i] == EOF){
+      break;
+    }
+  }
+  return i;
+}
+
 
 //----------------------------------------------------------------------
 // ExceptionHandler
@@ -107,6 +119,13 @@ ExceptionHandler (ExceptionType which)
                     consoledriver->PutChar(machine->ReadRegister(4));
                     break;
                   }
+                case SC_GetChar:
+                {
+                  DEBUG('s',"GetChar\n");
+                  int c = consoledriver->GetChar();
+                  machine->WriteRegister(2,c);
+                  break;
+                }
                 case SC_PutString:
                   {
                     DEBUG ('s',"PutString\n");
@@ -115,6 +134,14 @@ ExceptionHandler (ExceptionType which)
                     consoledriver->PutString(buffer);
                     break;
                   }
+                case SC_GetString:
+                {
+                  DEBUG ('s', "GetString\n");
+                  char buffer[MAX_STRING_SIZE];
+                  consoledriver->GetString(buffer,MAX_STRING_SIZE);
+                  copyStringToMachine(machine->ReadRegister(2),buffer,MAX_STRING_SIZE);
+                  break;
+                }
                 case SC_Exit:
                   {
                     DEBUG ('s', "Exiting the program : exit value %d\n", machine->ReadRegister(2));

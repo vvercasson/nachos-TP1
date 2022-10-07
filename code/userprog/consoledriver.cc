@@ -50,7 +50,7 @@ void ConsoleDriver::GetString(char *s, int n)
 {
     for(int i = 0; i < n; i++) {
         s[i] = GetChar();
-        if (s[i] == '\0') {
+        if (s[i] == '\0' || s[i] == EOF) {
             return;
         }
     }
