@@ -83,6 +83,8 @@ AddrSpace::AddrSpace (OpenFile * executable)
     numPages = divRoundUp (size, PageSize);
     size = numPages * PageSize;
 
+    nb_thread = 0; // THREAD COUNTER
+    
     // check we're not trying
     // to run anything too big --
     // at least until we have
@@ -291,4 +293,15 @@ AddrSpace::RestoreState ()
 {
     machine->currentPageTable = pageTable;
     machine->currentPageTableSize = numPages;
+}
+
+//
+//
+//
+
+int
+AddrSpace::AllocateUserStack()
+{
+    // TODO: Gérer selon le thread qui demande
+    return (machine->ReadRegister(StackReg) + 256);
 }

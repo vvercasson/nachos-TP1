@@ -1,11 +1,11 @@
 #include "syscall.h"
 
 void display() {
-    int i;
-    for (i = 0; i < 5; i++)
-    {
-        PutChar(i);
-    }
+    PutChar('a');
+    PutChar('b');
+    PutChar('c');
+    PutChar('\n');
+    ThreadExit();
 }
 
 int main() 

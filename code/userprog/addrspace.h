@@ -34,6 +34,7 @@ class AddrSpace:public dontcopythis
 
     void SaveState (void);      // Save/restore address space-specific
     void RestoreState (void);   // info on a context switch
+    int AllocateUserStack(void); // Allocate the new thread its space
 
     unsigned Dump(FILE *output, unsigned addr_s, unsigned sections_x, unsigned virtual_x, unsigned virtual_width,
                     unsigned physical_x, unsigned virtual_y, unsigned y,
@@ -41,8 +42,16 @@ class AddrSpace:public dontcopythis
                                 // Dump program layout as SVG
     unsigned NumPages(void) { return numPages; }
 
+    unsigned Nb_Thread(void) { return nb_thread; }
+
+    void addThread(void) { nb_thread++; }
+
+    void removeThread(void) { nb_thread--; }
+
   private:
     NoffHeader noffH;           // Program layout
+
+    unsigned int nb_thread;
 
     TranslationEntry * pageTable; // Page table
     unsigned int numPages;      // Number of pages in the page table
