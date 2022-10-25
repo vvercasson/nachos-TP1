@@ -83,7 +83,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
     numPages = divRoundUp (size, PageSize);
     size = numPages * PageSize;
 
-    nb_thread = 0; // THREAD COUNTER
+    nb_thread = 1; // THREAD COUNTER
     
     // check we're not trying
     // to run anything too big --
@@ -131,6 +131,10 @@ AddrSpace::AddrSpace (OpenFile * executable)
     pageTable[0].valid = FALSE;			// Catch NULL dereference
 
     AddrSpaceList.Append(this);
+
+    // HANDLE MUTEX
+    // mutex = new Semaphore("mutex", 0);
+    // mutex->V();
 }
 
 //----------------------------------------------------------------------

@@ -11,5 +11,8 @@ void display() {
 int main() 
 {
     ThreadCreate(display,0);
-    return 0;
+    PutChar('h');
+    PutChar('j');
+    PutChar('\n');
+    ThreadExit();
 }

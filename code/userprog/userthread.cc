@@ -37,6 +37,7 @@ static void StartUserThread(void *schmurtz) {
     machine->WriteRegister(4, t[1]);
     DEBUG ('s', "Initializing stack register to 0x%x\n",
            valeurStackReg);
+    machine->DumpMem("threads.svg");
     machine->Run();
 }
 
@@ -49,6 +50,7 @@ int do_ThreadCreate(int f, int arg) {
 
     t->space = currentThread->space;
     currentThread->space->addThread();
+
     t->Start(StartUserThread,tab);
     // currentThread->Yield();
 

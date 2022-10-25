@@ -145,10 +145,9 @@ ExceptionHandler (ExceptionType which)
                 }
                 case SC_Exit:
                   {
-                    while(currentThread->space->Nb_Thread() > 0) {
-                      DEBUG('s',"NB THREAD : %d\n", currentThread->space->Nb_Thread());
-                      currentThread->Yield();
-                    }
+                    // while(currentThread->space->Nb_Thread() > 0) {
+                    //   currentThread->Yield();
+                    // }
                     DEBUG ('s', "Exiting the program : exit value %d\n", machine->ReadRegister(2));
                     interrupt->Powerdown();
                     break;
@@ -156,12 +155,14 @@ ExceptionHandler (ExceptionType which)
                 case SC_ThreadCreate:
                   {
                     DEBUG ('s', "ThreadCreate\n");
-                    do_ThreadCreate(machine->ReadRegister(4),machine->ReadRegister(5)); // PEUT ETRE
+                    do_ThreadCreate(machine->ReadRegister(4),machine->ReadRegister(5));
                     break;
                   }
                 case SC_ThreadExit:
                   {
-                    currentThread->space->removeThread();
+                    if(currentThread->space->removeThread() == 0) {
+                      interrupt->Powerdown();
+                    }
                     currentThread->Finish();
                     DEBUG ('s', "ThreadExit\n");
                     break;

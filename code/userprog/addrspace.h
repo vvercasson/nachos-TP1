@@ -21,6 +21,8 @@
 
 #define UserStacksAreaSize		1024	// increase this as necessary!
 
+// class Semaphore;
+
 class AddrSpace:public dontcopythis
 {
   public:
@@ -42,16 +44,18 @@ class AddrSpace:public dontcopythis
                                 // Dump program layout as SVG
     unsigned NumPages(void) { return numPages; }
 
-    unsigned Nb_Thread(void) { return nb_thread; }
+unsigned int nb_thread = 1;
+    unsigned addThread(void) { nb_thread++; return nb_thread; }
 
-    void addThread(void) { nb_thread++; }
+    // TODO: MUTEX ?
+  unsigned removeThread(void) { nb_thread--; return nb_thread; }
 
-    void removeThread(void) { nb_thread--; }
+    
+
+    // Semaphore *mutex;
 
   private:
     NoffHeader noffH;           // Program layout
-
-    unsigned int nb_thread;
 
     TranslationEntry * pageTable; // Page table
     unsigned int numPages;      // Number of pages in the page table
