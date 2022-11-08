@@ -2,14 +2,14 @@
 #include "stdint.h"
 #include "system.h"
 
-int tab[2];
+// int tab[2];
 
-#define THREAD_START_ADDRESS 0x180
+// #define THREAD_START_ADDRESS 0x180
 
 static void StartUserThread(void *schmurtz) {
     DEBUG('s',"Entering StartUserThread\n");
     int* t = (int*) schmurtz;
-    DEBUG('s', "valeur tab 1 : %d\nvaleur tab 2 : %d\n",tab[0],tab[1]);
+    // DEBUG('s', "valeur tab 1 : %d\nvaleur tab 2 : %d\n",tab[0],tab[1]);
 
     // INIT REGISTERS COPY
     int i;
@@ -35,6 +35,7 @@ static void StartUserThread(void *schmurtz) {
     // END OF COPY
 
     machine->WriteRegister(4, t[1]);
+    free(schmurtz);
     DEBUG ('s', "Initializing stack register to 0x%x\n",
            valeurStackReg);
     machine->DumpMem("threads.svg");
@@ -45,7 +46,11 @@ int do_ThreadCreate(int f, int arg) {
     DEBUG ('s', "Creating a Thread\n");
     Thread *t = new Thread ("New_Thread");
 
-    tab[0] = f; // TODO: Trouver une meilleure solution car plusieurs Thread = non fonctionnel
+    // tab[0] = f; // TODO: Trouver une meilleure solution car plusieurs Thread = non fonctionnel
+    // tab[1] = arg;
+    int *tab;
+    tab = (int*) malloc(2 * sizeof(int*));
+    tab[0] = f;
     tab[1] = arg;
 
     t->space = currentThread->space;

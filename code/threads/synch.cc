@@ -109,8 +109,9 @@ Semaphore::V ()
 // the test case in the network assignment won't work!
 Lock::Lock (const char *debugName)
 {
-    (void) debugName;
-    ASSERT_MSG(FALSE, "TODO\n");
+    name = debugName;
+    // ASSERT_MSG(FALSE, "TODO\n");
+    etat = FREE;
 }
 
 Lock::~Lock ()
@@ -119,12 +120,17 @@ Lock::~Lock ()
 void
 Lock::Acquire ()
 {
-    ASSERT_MSG(FALSE, "TODO\n");
+    while(etat == BUSY) {
+        currentThread->Sleep();
+    }
+    etat = BUSY;
+    // ASSERT_MSG(FALSE, "TODO\n");
 }
 void
 Lock::Release ()
 {
-    ASSERT_MSG(FALSE, "TODO\n");
+    etat = FREE;
+    // ASSERT_MSG(FALSE, "TODO\n");
 }
 
 Condition::Condition (const char *debugName)

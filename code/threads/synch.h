@@ -67,6 +67,10 @@ class Semaphore:public dontcopythis
 // may release it.  As with semaphores, you can't read the lock value
 // (because the value might change immediately after you read it).
 
+typedef enum {
+  FREE, BUSY
+} State;
+
 class Lock:public dontcopythis
 {
   public:
@@ -87,6 +91,8 @@ class Lock:public dontcopythis
 
   private:
     const char *name;           // for debugging
+    State etat;
+
     // plus some other stuff you'll need to define
 };
 

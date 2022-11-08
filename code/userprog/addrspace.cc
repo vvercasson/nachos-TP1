@@ -20,6 +20,7 @@
 #include "addrspace.h"
 #include "noff.h"
 #include "syscall.h"
+#include "synch.h"
 #include "new"
 
 //----------------------------------------------------------------------
@@ -69,6 +70,14 @@ List AddrSpaceList;
 AddrSpace::AddrSpace (OpenFile * executable)
 {
     unsigned int i, size;
+
+    // INIT SEMAPHORE
+    mutex = new Semaphore("mutex",0);
+    mutex->V();
+
+    // INIT BITMAP
+    bitmap = new BitMap(MAX_THREAD);
+    bitmap->Mark(0); // Marking first thread (Main)
 
     executable->ReadAt (&noffH, sizeof (noffH), 0);
     if ((noffH.noffMagic != NOFFMAGIC) &&
@@ -131,10 +140,6 @@ AddrSpace::AddrSpace (OpenFile * executable)
     pageTable[0].valid = FALSE;			// Catch NULL dereference
 
     AddrSpaceList.Append(this);
-
-    // HANDLE MUTEX
-    // mutex = new Semaphore("mutex", 0);
-    // mutex->V();
 }
 
 //----------------------------------------------------------------------
@@ -299,6 +304,16 @@ AddrSpace::RestoreState ()
     machine->currentPageTableSize = numPages;
 }
 
+unsigned
+AddrSpace::addThread() {
+    mutex->P(); nb_thread++; mutex->V(); return nb_thread;
+}
+
+unsigned
+AddrSpace::removeThread() {
+    mutex->P(); nb_thread--; mutex->V(); return nb_thread;
+}
+
 //
 //
 //
@@ -307,5 +322,9 @@ int
 AddrSpace::AllocateUserStack()
 {
     // TODO: Gérer selon le thread qui demande
-    return (machine->ReadRegister(StackReg) + 256);
+    mutex->P();
+    int index = bitmap->Find();
+    bitmap->Mark(index);
+    mutex->V();
+    return (index * 256);
 }

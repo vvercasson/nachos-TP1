@@ -18,14 +18,31 @@
 #include "translate.h"
 #include "noff.h"
 #include "list.h"
+#include "bitmap.h"
 
-#define UserStacksAreaSize		1024	// increase this as necessary!
+#define MAX_THREAD 10 // max number of thread
+#define UserStacksAreaSize  MAX_THREAD * 256	// increase this as necessary!
 
-// class Semaphore;
+class Semaphore;
 
 class AddrSpace:public dontcopythis
 {
+  private:
+    NoffHeader noffH;           // Program layout
+
+    TranslationEntry * pageTable; // Page table
+    unsigned int numPages;      // Number of pages in the page table
+    Semaphore *mutex;
+    BitMap *bitmap;
+    // TODO: Bitmap *bitmap;
+    /* EXEMPLE 
+      BITMAP
+      MAX TRHREAD = 8
+      USerStackAreaSize = MAX THREAD * 256
+      (voir photo 8 nov)
+    */
   public:
+
     AddrSpace (OpenFile * executable); // Create an address space,
     // initializing it with the program
     // stored in the file "executable"
@@ -44,21 +61,9 @@ class AddrSpace:public dontcopythis
                                 // Dump program layout as SVG
     unsigned NumPages(void) { return numPages; }
 
-unsigned int nb_thread = 1;
-    unsigned addThread(void) { nb_thread++; return nb_thread; }
-
-    // TODO: MUTEX ?
-  unsigned removeThread(void) { nb_thread--; return nb_thread; }
-
-    
-
-    // Semaphore *mutex;
-
-  private:
-    NoffHeader noffH;           // Program layout
-
-    TranslationEntry * pageTable; // Page table
-    unsigned int numPages;      // Number of pages in the page table
+    unsigned int nb_thread;
+    unsigned addThread(void);
+    unsigned removeThread(void);
 };
 
 extern List AddrspaceList;
