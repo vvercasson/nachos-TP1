@@ -9,7 +9,6 @@
 static void StartUserThread(void *schmurtz) {
     DEBUG('s',"Entering StartUserThread\n");
     int* t = (int*) schmurtz;
-    // DEBUG('s', "valeur tab 1 : %d\nvaleur tab 2 : %d\n",tab[0],tab[1]);
 
     // INIT REGISTERS COPY
     int i;
@@ -18,7 +17,7 @@ static void StartUserThread(void *schmurtz) {
         machine->WriteRegister (i, 0);
 
     // Initial program counter -- must be location of "Start"
-    machine->WriteRegister (PCReg, t[0]); // DOUTE
+    machine->WriteRegister (PCReg, t[0]);
     DEBUG ('s', "Initializing PCReg register to 0x%x\n",
     t[0]);
 
@@ -30,7 +29,6 @@ static void StartUserThread(void *schmurtz) {
     // allocated the stack; but subtract off a bit, to make sure we don't
     // accidentally reference off the end!
     int valeurStackReg = currentThread->space->AllocateUserStack();
-
     machine->WriteRegister(StackReg, valeurStackReg);
     // END OF COPY
 
@@ -46,8 +44,7 @@ int do_ThreadCreate(int f, int arg) {
     DEBUG ('s', "Creating a Thread\n");
     Thread *t = new Thread ("New_Thread");
 
-    // tab[0] = f; // TODO: Trouver une meilleure solution car plusieurs Thread = non fonctionnel
-    // tab[1] = arg;
+    // Handle args
     int *tab;
     tab = (int*) malloc(2 * sizeof(int*));
     tab[0] = f;

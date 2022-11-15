@@ -315,16 +315,12 @@ AddrSpace::removeThread() {
 }
 
 //
-//
-//
 
 int
 AddrSpace::AllocateUserStack()
 {
-    // TODO: Gérer selon le thread qui demande
     mutex->P();
     int index = bitmap->Find();
-    bitmap->Mark(index);
     mutex->V();
     return (index * 256);
 }

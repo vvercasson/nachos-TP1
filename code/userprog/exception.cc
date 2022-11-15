@@ -163,6 +163,8 @@ ExceptionHandler (ExceptionType which)
                     if(currentThread->space->removeThread() == 0) {
                       interrupt->Powerdown();
                     }
+                    // TODO: CLEAR BITMAP LOCATION
+                    // currentThread->space->bitmap->Clear(WHICH)
                     currentThread->Finish();
                     DEBUG ('s', "ThreadExit\n");
                     break;

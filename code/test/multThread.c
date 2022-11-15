@@ -8,6 +8,14 @@ void display() {
     ThreadExit();
 }
 
+void dislayFor() {
+    int i;
+    for(i=0; i < 3; i++) {
+        PutChar('a');
+    }
+    ThreadExit();
+}
+
 
 void display3() {
     PutChar('k');
@@ -31,9 +39,10 @@ void display2() {
 
 int main() 
 {
-    ThreadCreate(display2,0);
-    PutChar('h');
-    PutChar('j');
-    PutChar('\n');
+    ThreadCreate(dislayFor,0);
+    ThreadCreate(dislayFor,0);
+    ThreadCreate(dislayFor,0);
+    // ThreadCreate(display2,0);
+    // ThreadCreate(display3,0);
     ThreadExit();
 }
