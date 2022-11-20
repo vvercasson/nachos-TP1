@@ -99,8 +99,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
     unsigned int i, size;
 
     // INIT SEMAPHORE
-    mutex = new Semaphore("mutex",0);
-    mutex->V();
+    mutex = new Semaphore("mutex",1);
 
     // INIT BITMAP
     bitmap = new BitMap(MAX_THREAD);
