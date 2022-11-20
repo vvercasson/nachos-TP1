@@ -10,6 +10,7 @@ static Semaphore *writeDone;
 
 // initialiser mutex
 static Semaphore *mutex;
+static Semaphore *mutex2;
 
 static void ReadAvailHandler(void *arg) { (void) arg; readAvail->V(); }
 static void WriteDoneHandler(void *arg) { (void) arg; writeDone->V(); }
@@ -18,10 +19,9 @@ ConsoleDriver::ConsoleDriver(const char *in, const char *out)
 {
     readAvail = new Semaphore("read avail", 0);
     writeDone = new Semaphore("write done", 0);
-    mutex = new Semaphore("mutex", 0);
+    mutex = new Semaphore("mutex", 1);
+    mutex2 = new Semaphore("mutex2", 1);
     console = new Console (in, out, ReadAvailHandler, WriteDoneHandler, NULL);
-    mutex->V();
-
 }
 
 ConsoleDriver::~ConsoleDriver()
@@ -51,25 +51,26 @@ int ConsoleDriver::GetChar()
 
 void ConsoleDriver::PutString(const char *s)
 {
-    mutex->P();
+    mutex2->P();
     int i = 0;
     while(s[i] != '\0') {
         PutChar(s[i]);
         i++;
     }
-    mutex->V();
+    PutChar(s[i]);
+    mutex2->V();
 }
 
 void ConsoleDriver::GetString(char *s, int n)
 {
-    mutex->P();
+    mutex2->P();
     for(int i = 0; i < n; i++) {
         s[i] = GetChar();
         if (s[i] == '\0' || s[i] == EOF) {
             return;
         }
     }
-    mutex->V();
+    mutex2->V();
 }
 
 #endif // CHANGED
