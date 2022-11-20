@@ -2,7 +2,7 @@
 
 int main() 
 {
-    PutString("HelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHello\0");
+    PutString("HelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHelloHello\0");
     return 10;
     // Halt();
 }
