@@ -64,6 +64,7 @@ Thread::Thread (const char *threadName)
     status = JUST_CREATED;
 #ifdef USER_PROGRAM
     space = NULL;
+    slot_thread = -1;
 
     // must be explicitly set to 0 since when Enabling interrupts,
     // DelayedLoad is called !!!

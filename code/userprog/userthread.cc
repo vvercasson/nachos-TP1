@@ -28,7 +28,9 @@ static void StartUserThread(void *schmurtz) {
     // Set the stack register to the end of the address space, where we
     // allocated the stack; but subtract off a bit, to make sure we don't
     // accidentally reference off the end!
-    int valeurStackReg = currentThread->space->AllocateUserStack();
+    DEBUG('s',"test ;)");
+    int valeurStackReg = currentThread->space->AllocateUserStack(currentThread->getSlot());
+    DEBUG('s',"Stack value of valeurStackReg = %d", valeurStackReg);
     machine->WriteRegister(StackReg, valeurStackReg);
     // END OF COPY
 
@@ -43,7 +45,7 @@ static void StartUserThread(void *schmurtz) {
 int do_ThreadCreate(int f, int arg) {
     DEBUG ('s', "Creating a Thread\n");
     Thread *t = new Thread ("New_Thread");
-
+    
     // Handle args
     int *tab;
     tab = (int*) malloc(2 * sizeof(int*));
@@ -51,10 +53,13 @@ int do_ThreadCreate(int f, int arg) {
     tab[1] = arg;
 
     t->space = currentThread->space;
-    currentThread->space->addThread();
+    int slot = currentThread->space->addThread();
+    if(slot == -1) {
+        free(tab);
+        return -1;
+    }
+    t->setSlot(slot);
 
     t->Start(StartUserThread,tab);
-    // currentThread->Yield();
-
     return 0;
 }

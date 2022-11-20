@@ -53,7 +53,7 @@ class AddrSpace:public dontcopythis
 
     void SaveState (void);      // Save/restore address space-specific
     void RestoreState (void);   // info on a context switch
-    int AllocateUserStack(void); // Allocate the new thread its space
+    int AllocateUserStack(int slot); // Allocate the new thread its space
 
     unsigned Dump(FILE *output, unsigned addr_s, unsigned sections_x, unsigned virtual_x, unsigned virtual_width,
                     unsigned physical_x, unsigned virtual_y, unsigned y,
@@ -63,7 +63,7 @@ class AddrSpace:public dontcopythis
 
     unsigned int nb_thread;
     unsigned addThread(void);
-    unsigned removeThread(void);
+    unsigned removeThread(int slot);
 };
 
 extern List AddrspaceList;

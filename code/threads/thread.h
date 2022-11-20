@@ -82,7 +82,6 @@ class Thread:public dontcopythis
     // THEY MUST be in this position for SWITCH to work.
     unsigned long *stackTop;            // the current kernel stack pointer
     unsigned long machineState[MachineStateSize]; // all kernel registers except for stackTop
-
   public:
       Thread (const char *debugName);   // initialize a Thread
       void SetMain (void);              // initialize Thread as main thread
@@ -101,6 +100,14 @@ class Thread:public dontcopythis
     void Finish (void);                 // The thread is done executing
 
     void CheckOverflow (void);          // Check if thread has
+
+    void setSlot(int slot) {
+        slot_thread = slot;
+    }
+
+    int getSlot(void) {
+        return (slot_thread);
+    }
     // overflowed its stack
     void setStatus (ThreadStatus st)
     {
@@ -134,6 +141,7 @@ class Thread:public dontcopythis
     int main_stack;             // Whether this is the main stack provided by OS
     ThreadStatus status;        // ready, running or blocked
     const char *name;
+    int slot_thread;
 
     void StackAllocate (VoidFunctionPtr func, void *arg);
     // Allocate a stack for thread.

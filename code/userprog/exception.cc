@@ -160,11 +160,10 @@ ExceptionHandler (ExceptionType which)
                   }
                 case SC_ThreadExit:
                   {
-                    if(currentThread->space->removeThread() == 0) {
+                    int nb_thread_restant = currentThread->space->removeThread(currentThread->getSlot());
+                    if(nb_thread_restant == 0) {
                       interrupt->Powerdown();
                     }
-                    // TODO: CLEAR BITMAP LOCATION
-                    // currentThread->space->bitmap->Clear(WHICH)
                     currentThread->Finish();
                     DEBUG ('s', "ThreadExit\n");
                     break;

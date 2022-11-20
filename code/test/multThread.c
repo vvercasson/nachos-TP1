@@ -11,7 +11,7 @@ void display() {
 void dislayFor() {
     int i;
     for(i=0; i < 3; i++) {
-        PutChar('a');
+        PutChar('a' + i);
     }
     ThreadExit();
 }
@@ -42,7 +42,6 @@ int main()
     ThreadCreate(dislayFor,0);
     ThreadCreate(dislayFor,0);
     ThreadCreate(dislayFor,0);
-    // ThreadCreate(display2,0);
-    // ThreadCreate(display3,0);
     ThreadExit();
+    return -1;
 }

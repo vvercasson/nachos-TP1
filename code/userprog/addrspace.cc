@@ -46,6 +46,33 @@ SwapHeader (NoffHeader * noffH)
     noffH->uninitData.inFileAddr = WordToHost (noffH->uninitData.inFileAddr);
 }
 
+static void
+ReadAtVirtual(OpenFile *executable, int virtualaddr, int numBytes, int position, TranslationEntry *pageTable, unsigned numPages){
+    //malloc tableau d'octets
+    char* tmp = (char*) malloc(sizeof(char*) * numBytes);
+
+    // save
+    TranslationEntry* savePage = machine->currentPageTable;
+    unsigned sizeSavePage = machine->currentPageTableSize;
+
+    // Change table
+    machine->currentPageTable = pageTable;
+    machine->currentPageTableSize = numPages;
+
+    // Read and write
+    executable->ReadAt(tmp,numBytes,position);
+
+    for (int i = 0; i < numBytes; i++)
+    {
+        machine->WriteMem(virtualaddr+i,1,tmp[i]);
+    }
+
+    // Restore and free
+    machine->currentPageTable = savePage;
+    machine->currentPageTableSize = sizeSavePage;
+    free(tmp);
+}
+
 //----------------------------------------------------------------------
 // AddrSpaceList
 //      List of all address spaces, for debugging
@@ -77,7 +104,8 @@ AddrSpace::AddrSpace (OpenFile * executable)
 
     // INIT BITMAP
     bitmap = new BitMap(MAX_THREAD);
-    bitmap->Mark(0); // Marking first thread (Main)
+    // bitmap->Mark(0); // Marking first thread (Main)
+    currentThread->setSlot(0);
 
     executable->ReadAt (&noffH, sizeof (noffH), 0);
     if ((noffH.noffMagic != NOFFMAGIC) &&
@@ -86,7 +114,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
     /* Check that this is really a MIPS program */
     ASSERT_MSG (noffH.noffMagic == NOFFMAGIC, "This is not a nachos binary!\n");
 
-// how big is address space?
+    // how big is address space?
     size = noffH.code.size + noffH.initData.size + noffH.uninitData.size + UserStacksAreaSize;	// we need to increase the size
     // to leave room for the stack
     numPages = divRoundUp (size, PageSize);
@@ -123,6 +151,7 @@ AddrSpace::AddrSpace (OpenFile * executable)
                  noffH.code.virtualAddr, noffH.code.size);
           executable->ReadAt (&(machine->mainMemory[noffH.code.virtualAddr]),
                               noffH.code.size, noffH.code.inFileAddr);
+        // ReadAtVirtual(executable,noffH.code.virtualAddr,noffH.code.size,noffH.code.inFileAddr,currentThread->space->pageTable,currentThread->space->numPages);
       }
     if (noffH.initData.size > 0)
       {
@@ -132,6 +161,8 @@ AddrSpace::AddrSpace (OpenFile * executable)
                               (machine->mainMemory
                                [noffH.initData.virtualAddr]),
                               noffH.initData.size, noffH.initData.inFileAddr);
+        // ReadAtVirtual(executable,noffH.initData.virtualAddr,noffH.initData.size,noffH.initData.inFileAddr,currentThread->space->pageTable,currentThread->space->numPages);
+
       }
 
     DEBUG ('a', "Area for stacks at 0x%x, size 0x%x\n",
@@ -306,21 +337,28 @@ AddrSpace::RestoreState ()
 
 unsigned
 AddrSpace::addThread() {
-    mutex->P(); nb_thread++; mutex->V(); return nb_thread;
+    mutex->P();
+    nb_thread++;
+    int pos = bitmap->Find();
+    mutex->V();
+    return pos;
 }
 
 unsigned
-AddrSpace::removeThread() {
-    mutex->P(); nb_thread--; mutex->V(); return nb_thread;
+AddrSpace::removeThread(int slot) {
+    mutex->P();
+    nb_thread--;
+    bitmap->Clear(slot);
+    mutex->V();
+    return nb_thread;
 }
 
 //
 
 int
-AddrSpace::AllocateUserStack()
+AddrSpace::AllocateUserStack(int slot)
 {
-    mutex->P();
-    int index = bitmap->Find();
-    mutex->V();
-    return (index * 256);
+    int size = numPages * PageSize;
+    int thread_stack =  size - (256 * slot);
+    return thread_stack;
 }
