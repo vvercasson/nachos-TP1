@@ -101,15 +101,10 @@ class Thread:public dontcopythis
 
     void CheckOverflow (void);          // Check if thread has
 
-    void setSlot(int slot) {
-        ASSERT_MSG (slot < MAX_THREAD, "Can't set a slot to a value that his higher than the maximum of thread allowed\n");
-        if(slot < MAX_THREAD)
-            slot_thread = slot;
-    }
+    void setSlot(int slot);
 
-    int getSlot(void) {
-        return (slot_thread);
-    }
+    int getSlot(void);
+
     // overflowed its stack
     void setStatus (ThreadStatus st)
     {

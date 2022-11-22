@@ -529,6 +529,16 @@ DumpThreadsState(FILE *output, AddrSpace *space, unsigned ptr_x, unsigned virtua
       }
 }
 
+    void Thread::setSlot(int slot) {
+        ASSERT_MSG (slot < MAX_THREAD, "Can't set a slot to a value that his higher than the maximum of thread allowed\n");
+        if(slot < MAX_THREAD)
+            slot_thread = slot;
+    }
+
+    int Thread::getSlot(void) {
+        return (slot_thread);
+    }
+
 #endif
 
 

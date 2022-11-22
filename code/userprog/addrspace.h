@@ -19,6 +19,8 @@
 #include "noff.h"
 #include "list.h"
 #include "bitmap.h"
+#include "pageprovider.h"
+
 
 #define MAX_THREAD 10 // max number of thread
 #define UserStacksAreaSize  MAX_THREAD * 256	// increase this as necessary!
@@ -34,6 +36,7 @@ class AddrSpace:public dontcopythis
     unsigned int numPages;      // Number of pages in the page table
     Semaphore *mutex;
     BitMap *bitmap;
+    PageProvider *p;
     // TODO: Bitmap *bitmap;
     /* EXEMPLE 
       BITMAP
