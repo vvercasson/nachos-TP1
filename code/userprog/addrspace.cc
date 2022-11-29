@@ -131,13 +131,12 @@ AddrSpace::AddrSpace (OpenFile * executable)
     DEBUG ('a', "Initializing address space, num pages %d, total size 0x%x\n",
            numPages, size);
 // first, set up the translation
-    p = new PageProvider(size);
     pageTable = new TranslationEntry[numPages];
+    p = new PageProvider(numPages,pageTable);
     for (i = 0; i < numPages; i++)
       {
         //   pageTable[i].physicalPage = i+1; //TODO: pageprovider->getEmptyPage();        // for now, phys page # = virtual page #
-          pageTable[i].physicalPage = p->GetEmptyPage(); //TODO: pageprovider->getEmptyPage();        // for now, phys page # = virtual page #
-
+          pageTable[i].physicalPage = p->GetEmptyPage(); //TODO: pageprovider->getEmptyPage();
           pageTable[i].valid = TRUE;
           pageTable[i].use = FALSE;
           pageTable[i].dirty = FALSE;

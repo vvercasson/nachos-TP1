@@ -186,6 +186,7 @@ Initialize (int argc, char **argv)
 
 #ifdef USER_PROGRAM
     machine = new Machine (debugUserProg);	// this must come first
+    //TODO: ADD PAGE PROVIDER ??
 #endif
 
 #ifdef FILESYS
