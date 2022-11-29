@@ -1,33 +1,50 @@
 #include "system.h"
+#include "machine.h"
+#include "synch.h"
 
-PageProvider::PageProvider(unsigned int size,TranslationEntry * currentPageTable) {
-    b = new BitMap(size);
-    taille = size;
-    pageTable = currentPageTable;
+PageProvider::PageProvider() {
+    b = new BitMap(NumPhysPages);
+    mutex = new Semaphore("mutex",1);
+    reservedPages = 0;
 }
 
 unsigned int
 PageProvider::GetEmptyPage() {
+    mutex->P();
     unsigned int pos = b->Find();
     DEBUG('p', "Asked for page %d\n", pos);
 
+    reservedPages--;
+
     // Create Table + memset
-    memset(&pageTable[pos],0,taille);
+    memset(&machine->mainMemory[pos * PageSize],0,PageSize);
 
     // Return table pos
+    mutex->V();
     return pos;
 }
 
 void
 PageProvider::ReleasePage(int pageToClear) {
+    mutex->P();
     DEBUG('p', "Asked to clear page %d\n", pageToClear);
     b->Clear(pageToClear);
-    // Should we set it back to 0 ?
+    mutex->V();
 }
 
 unsigned int
 PageProvider::NumAvailPage() {
-    return b->NumClear();
+    return b->NumClear() - reservedPages;
+}
+
+bool
+PageProvider::ReserverPage(unsigned int nb) {
+    if(NumAvailPage() >= nb) {
+        reservedPages += nb;
+        return true;
+    }
+    throw NotEnoughAvailablePagesException();
+    return false;
 }
 
 PageProvider::~PageProvider() {

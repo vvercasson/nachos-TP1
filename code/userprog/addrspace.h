@@ -19,7 +19,6 @@
 #include "noff.h"
 #include "list.h"
 #include "bitmap.h"
-#include "pageprovider.h"
 
 
 #define MAX_THREAD 10 // max number of thread
@@ -31,19 +30,10 @@ class AddrSpace:public dontcopythis
 {
   private:
     NoffHeader noffH;           // Program layout
-
     TranslationEntry * pageTable; // Page table
     unsigned int numPages;      // Number of pages in the page table
     Semaphore *mutex;
     BitMap *bitmap;
-    PageProvider *p;
-    // TODO: Bitmap *bitmap;
-    /* EXEMPLE 
-      BITMAP
-      MAX TRHREAD = 8
-      USerStackAreaSize = MAX THREAD * 256
-      (voir photo 8 nov)
-    */
   public:
 
     AddrSpace (OpenFile * executable); // Create an address space,

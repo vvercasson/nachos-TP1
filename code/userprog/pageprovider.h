@@ -1,15 +1,17 @@
 #include "bitmap.h"
+#include "synch.h"
 
 class PageProvider
 {
 private:
     BitMap* b;
-    unsigned int taille;
-    TranslationEntry* pageTable;
+    Semaphore* mutex;
+    unsigned int reservedPages;
 public:
-    PageProvider(unsigned int size,TranslationEntry * currentPageTable);
+    PageProvider();
     ~PageProvider();
     unsigned int GetEmptyPage();
     void ReleasePage(int pageToClear);
     unsigned int NumAvailPage();
+    bool ReserverPage(unsigned int nb);
 };

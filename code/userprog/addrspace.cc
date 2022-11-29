@@ -23,6 +23,7 @@
 #include "synch.h"
 #include "new"
 
+
 //----------------------------------------------------------------------
 // SwapHeader
 //      Do little endian to big endian conversion on the bytes in the
@@ -132,18 +133,24 @@ AddrSpace::AddrSpace (OpenFile * executable)
            numPages, size);
 // first, set up the translation
     pageTable = new TranslationEntry[numPages];
-    p = new PageProvider(numPages,pageTable);
-    for (i = 0; i < numPages; i++)
-      {
-        //   pageTable[i].physicalPage = i+1; //TODO: pageprovider->getEmptyPage();        // for now, phys page # = virtual page #
-          pageTable[i].physicalPage = p->GetEmptyPage(); //TODO: pageprovider->getEmptyPage();
-          pageTable[i].valid = TRUE;
-          pageTable[i].use = FALSE;
-          pageTable[i].dirty = FALSE;
-          pageTable[i].readOnly = FALSE;        // if the code segment was entirely on
-          // a separate page, we could set its
-          // pages to be read-only
-      }
+    if(pageProvider->ReserverPage(numPages)) {
+        DEBUG('s',"ON PEUT RESERVER LA");
+        for (i = 0; i < numPages; i++)
+        {
+            //   pageTable[i].physicalPage = i+1;    // for now, phys page # = virtual page #
+            pageTable[i].physicalPage = pageProvider->GetEmptyPage(); // release toutes les précédentes si -1
+            pageTable[i].valid = TRUE;
+            pageTable[i].use = FALSE;
+            pageTable[i].dirty = FALSE;
+            pageTable[i].readOnly = FALSE;        // if the code segment was entirely on
+            // a separate page, we could set its
+            // pages to be read-only
+        }
+    }
+    else {
+        throw NotEnoughAvailablePagesException();
+    }
+
 
 // then, copy in the code and data segments into memory
     if (noffH.code.size > 0)        //   executable->ReadAt (&
@@ -175,6 +182,8 @@ AddrSpace::AddrSpace (OpenFile * executable)
     pageTable[0].valid = FALSE;			// Catch NULL dereference
 
     AddrSpaceList.Append(this);
+
+    machine->DumpMem("addrspace.svg");
 }
 
 //----------------------------------------------------------------------
@@ -184,6 +193,11 @@ AddrSpace::AddrSpace (OpenFile * executable)
 
 AddrSpace::~AddrSpace ()
 {
+  for (unsigned int i = 0; i < numPages; i++)
+  {
+    pageProvider->ReleasePage(pageTable[i].physicalPage);
+  }
+  
   delete [] pageTable;
   pageTable = NULL;
 

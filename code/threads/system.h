@@ -16,6 +16,10 @@
 #include "stats.h"
 #include "timer.h"
 
+class NotEnoughAvailablePagesException {
+
+};
+
 // Initialization and cleanup routines
 extern void Initialize (int argc, char **argv); // Initialization,
                                                 // called before anything else
@@ -29,9 +33,14 @@ extern Interrupt *interrupt;    // interrupt status
 extern Statistics *stats;       // performance metrics
 extern Timer *timer;            // the hardware alarm clock
 
+
 #ifdef USER_PROGRAM
 #include "machine.h"
 extern Machine *machine;        // user program memory and registers
+
+#include "pageprovider.h"
+extern PageProvider *pageProvider;
+
 #endif
 
 #ifdef FILESYS_NEEDED           // FILESYS or FILESYS_STUB

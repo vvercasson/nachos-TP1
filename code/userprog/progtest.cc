@@ -35,7 +35,15 @@ StartProcess (char *filename)
           ClearColor (stdout);
           return;
       }
-    space = new AddrSpace (executable);
+    try
+    {
+        space = new AddrSpace (executable);
+    }
+    catch(NotEnoughAvailablePagesException &e)
+    {
+        return;
+    }
+
     currentThread->space = space;
 
     delete executable;		// close file
