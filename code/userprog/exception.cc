@@ -25,6 +25,7 @@
 #include "system.h"
 #include "syscall.h"
 #include "userthread.h"
+#include "progtest.h"
 
 //----------------------------------------------------------------------
 // UpdatePC : Increments the Program Counter register in order to resume
@@ -145,9 +146,6 @@ ExceptionHandler (ExceptionType which)
                 }
                 case SC_Exit:
                   {
-                    // while(currentThread->space->Nb_Thread() > 0) {
-                    //   currentThread->Yield();
-                    // }
                     DEBUG ('s', "Exiting the program : exit value %d\n", machine->ReadRegister(2));
                     interrupt->Powerdown();
                     break;
@@ -156,6 +154,14 @@ ExceptionHandler (ExceptionType which)
                   {
                     DEBUG ('s', "ThreadCreate\n");
                     do_ThreadCreate(machine->ReadRegister(4),machine->ReadRegister(5));
+                    break;
+                  }
+                case SC_ForkExec:
+                  {
+                    DEBUG('s',"ForkExec\n");
+                    char buffer[MAX_STRING_SIZE];
+                    copyStringFromMachine(machine->ReadRegister(4),buffer,MAX_STRING_SIZE);
+                    do_ForkExec(buffer);
                     break;
                   }
                 case SC_ThreadExit:

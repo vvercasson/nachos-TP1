@@ -28,7 +28,6 @@ static void StartUserThread(void *schmurtz) {
     // Set the stack register to the end of the address space, where we
     // allocated the stack; but subtract off a bit, to make sure we don't
     // accidentally reference off the end!
-    DEBUG('s',"test ;)");
     int valeurStackReg = currentThread->space->AllocateUserStack(currentThread->getSlot());
     DEBUG('s',"Stack value of valeurStackReg = %d", valeurStackReg);
     machine->WriteRegister(StackReg, valeurStackReg);

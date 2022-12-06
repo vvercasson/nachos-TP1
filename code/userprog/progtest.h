@@ -12,7 +12,7 @@
 #define PROGTEST_H
 
 extern void StartProcess (char *filename);
-
+extern int do_ForkExec(const char *s);
 extern void ConsoleTest (const char *in, const char *out);
 extern void ConsoleDriverTest (const char *in, const char *out);
 
