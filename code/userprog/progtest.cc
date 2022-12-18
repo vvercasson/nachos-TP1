@@ -60,47 +60,6 @@ StartProcess (char *filename)
     // by doing the syscall "exit"
 }
 
-static void StartUserProg(){
-    // DIRE AU PROF QUE C'EST ICI 
-    // ?
-    DEBUG('s',"I'm here 2\n");
-    currentThread->space->InitRegisters();
-    currentThread->space->RestoreState();
-
-    machine->Run();
-}
-
-void
-do_ForkExec(const char* filename){
-    OpenFile *executable = fileSystem->Open(filename);
-    if (executable == NULL)
-      {
-          SetColor (stdout, ColorRed);
-          SetBold (stdout);
-          printf ("Unable to open file %s\n", filename);
-          ClearColor (stdout);
-          return;
-      }
-    AddrSpace *space;
-
-    // definir space
-    try
-    {
-        space = new AddrSpace (executable);
-    }
-    catch(NotEnoughAvailablePagesException &e)
-    {
-        return;
-    }
-    delete executable;
-    // lancer une nouvelle fonction StartUserProg
-    Thread* monThread = new Thread("ForkExecThread");
-    monThread->space = space;
-    DEBUG('s',"I'm here 1\n");
-    monThread->Start((VoidFunctionPtr)StartUserProg,nullptr);
-    // éventuellement augmenter NumPhysPages
-}
-
 // Data structures needed for the console test.  Threads making
 // I/O requests wait on a Semaphore to delay until the I/O completes.
 

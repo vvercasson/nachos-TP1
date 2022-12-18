@@ -26,6 +26,7 @@
 #include "syscall.h"
 #include "userthread.h"
 #include "progtest.h"
+#include "userfork.h"
 
 //----------------------------------------------------------------------
 // UpdatePC : Increments the Program Counter register in order to resume
@@ -102,6 +103,8 @@ ExceptionHandler (ExceptionType which)
     int type = machine->ReadRegister (2);
     int address = machine->registers[BadVAddrReg];
 
+    // int nb_proc = 1;
+
     switch (which)
       {
         case SyscallException:
@@ -147,6 +150,15 @@ ExceptionHandler (ExceptionType which)
                 case SC_Exit:
                   {
                     DEBUG ('s', "Exiting the program : exit value %d\n", machine->ReadRegister(2));
+                    // Si il n'y a plus qu'un seul processus vivant alors on le free completement
+                    // Sinon powerdown
+                    // DEBUG('s',"Number of proc in SC_Exit --> %d", nb_proc);
+                    // if(nb_proc > 1) {
+                    //   nb_proc--;
+                    //   // Must free
+                    //   currentThread->Finish();
+                    //   break;
+                    // }
                     interrupt->Powerdown();
                     break;
                   }
@@ -162,6 +174,8 @@ ExceptionHandler (ExceptionType which)
                     char buffer[MAX_STRING_SIZE];
                     copyStringFromMachine(machine->ReadRegister(4),buffer,MAX_STRING_SIZE);
                     do_ForkExec(buffer);
+                    // nb_proc++;
+                    // DEBUG('s',"Number of proc in ForkExec --> %d", nb_proc);
                     break;
                   }
                 case SC_ThreadExit:
