@@ -157,7 +157,7 @@ ExceptionHandler (ExceptionType which)
                       // Must free
                       DEBUG('s',"Killing Processus\n");
                       nb_proc--;
-                      free(currentThread->space);
+                      // free(currentThread->space);
                       currentThread->Finish();
 
                     }

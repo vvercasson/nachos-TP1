@@ -2,5 +2,5 @@
 
 int main(){
     ForkExec("../test/putstring");
-    while(1);
+    // while(1);
 }
