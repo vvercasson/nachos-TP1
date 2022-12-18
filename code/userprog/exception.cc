@@ -28,6 +28,8 @@
 #include "progtest.h"
 #include "userfork.h"
 
+unsigned int nb_proc = 1;
+
 //----------------------------------------------------------------------
 // UpdatePC : Increments the Program Counter register in order to resume
 // the user program immediately after the "syscall" instruction.
@@ -103,8 +105,6 @@ ExceptionHandler (ExceptionType which)
     int type = machine->ReadRegister (2);
     int address = machine->registers[BadVAddrReg];
 
-    // int nb_proc = 1;
-
     switch (which)
       {
         case SyscallException:
@@ -152,14 +152,19 @@ ExceptionHandler (ExceptionType which)
                     DEBUG ('s', "Exiting the program : exit value %d\n", machine->ReadRegister(2));
                     // Si il n'y a plus qu'un seul processus vivant alors on le free completement
                     // Sinon powerdown
-                    // DEBUG('s',"Number of proc in SC_Exit --> %d", nb_proc);
-                    // if(nb_proc > 1) {
-                    //   nb_proc--;
-                    //   // Must free
-                    //   currentThread->Finish();
-                    //   break;
-                    // }
-                    interrupt->Powerdown();
+                    DEBUG('s',"Value of nb_proc entering SC_Exit is %d\n", nb_proc);
+                    if(nb_proc > 1) {
+                      // Must free
+                      DEBUG('s',"Killing Processus\n");
+                      nb_proc--;
+                      free(currentThread->space);
+                      currentThread->Finish();
+
+                    }
+                    else {
+                      DEBUG('s',"Killing Nachos\n");
+                      interrupt->Powerdown();
+                    }
                     break;
                   }
                 case SC_ThreadCreate:
@@ -171,11 +176,10 @@ ExceptionHandler (ExceptionType which)
                 case SC_ForkExec:
                   {
                     DEBUG('s',"ForkExec\n");
-                    char buffer[MAX_STRING_SIZE];
+                    char buffer[MAX_STRING_SIZE]; 
                     copyStringFromMachine(machine->ReadRegister(4),buffer,MAX_STRING_SIZE);
+                    nb_proc++;
                     do_ForkExec(buffer);
-                    // nb_proc++;
-                    // DEBUG('s',"Number of proc in ForkExec --> %d", nb_proc);
                     break;
                   }
                 case SC_ThreadExit:
