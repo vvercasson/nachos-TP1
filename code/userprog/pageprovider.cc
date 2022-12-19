@@ -26,9 +26,12 @@ PageProvider::GetEmptyPage() {
 
 void
 PageProvider::ReleasePage(int pageToClear) {
+    ASSERT_MSG (pageToClear <= NumPhysPages && pageToClear >= 0, "PageToClear must be in a certain interval\n");
     mutex->P();
     DEBUG('p', "Asked to clear page %d\n", pageToClear);
-    b->Clear(pageToClear);
+    if(b->Test(pageToClear)) {
+        b->Clear(pageToClear);
+    }
     mutex->V();
 }
 

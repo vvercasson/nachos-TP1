@@ -157,8 +157,8 @@ ExceptionHandler (ExceptionType which)
                       // Must free
                       DEBUG('s',"Killing Processus\n");
                       nb_proc--;
-                      // free(currentThread->space);
                       currentThread->Finish();
+                      free(currentThread->space); 
 
                     }
                     else {
@@ -184,8 +184,9 @@ ExceptionHandler (ExceptionType which)
                   }
                 case SC_ThreadExit:
                   {
-                    int nb_thread_restant = currentThread->space->removeThread(currentThread->getSlot());
-                    if(nb_thread_restant == 0) {
+                    unsigned int nb_thread_restant = currentThread->space->removeThread(currentThread->getSlot());
+                    DEBUG('s',"slot : %d\nnb_thread_restant : %d\n",currentThread->getSlot(), nb_thread_restant);
+                    if(nb_thread_restant <= 0 && nb_proc <= 1) {
                       interrupt->Powerdown();
                     }
                     currentThread->Finish();

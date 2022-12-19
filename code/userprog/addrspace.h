@@ -21,7 +21,7 @@
 #include "bitmap.h"
 
 
-#define MAX_THREAD 10 // max number of thread
+#define MAX_THREAD 12 // max number of thread
 #define UserStacksAreaSize  MAX_THREAD * 256	// increase this as necessary!
 
 class Semaphore;
